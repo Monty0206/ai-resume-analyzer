@@ -997,10 +997,10 @@ Worked on various projects using Azure and helped the team with deployments."></
     </footer>
 
     <script>
-        // Use relative URL for API - works both locally and in production
+        // Use Azure App Service API URL for production
         const API_URL = window.location.hostname === 'localhost' 
             ? 'http://localhost:5050/api/resume'
-            : '/api/resume';
+            : 'https://ai-resume-analyzer-api-canodkvqg6h6g0f6b.canadaeast-01.azurewebsites.net/api/resume';
         let currentResumeId = null;
         let selectedFile = null;
 
