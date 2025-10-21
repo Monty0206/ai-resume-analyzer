@@ -1,0 +1,81 @@
+# .NET specific
+bin/
+obj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+.vs/
+.vscode/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.mdf
+*.ldf
+
+# Migrations (optional - comment out if you want to include them)
+# Migrations/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+launchSettings.json
+
+# Sensitive configuration
+appsettings.Production.json
+appsettings.Development.json
+appsettings.Secrets.json
+
+# Azure credentials (NEVER commit these)
+**/AzureAI/ApiKey
+*.env
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# Visual Studio cache/options directory
+.vs/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Node (if you add React later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

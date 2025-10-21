@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer Pro | GPT-4 Powered</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Midnight Neural Glow Theme */
+            --bg-dark: #05060F;
+            --bg-gradient: linear-gradient(135deg, #05060F 0%, #0B1222 100%);
+            --primary: #2E9BFF;
+            --secondary: #7A3EF5;
+            --success: #00AFFF;
+            --warning: #FFB800;
+            --danger: #FF4757;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(46, 155, 255, 0.3);
+            --text: #E3E8F7;
+            --subtext: #9CA3AF;
+            --glow: #00AFFF;
+            --glow-purple: #A259FF;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            line-height: 1.6;
+            color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(46, 155, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(122, 62, 245, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Floating orbs animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            33% { transform: translateY(-20px) translateX(10px); }
+            66% { transform: translateY(20px) translateX(-10px); }
+        }
+
+        /* Enhanced Header with Feature Tabs */
+        .header {
+            background: rgba(11, 18, 34, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 0;
+            box-shadow: 0 4px 30px rgba(46, 155, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(46, 155, 255, 0.5));
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px var(--glow));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(46, 155, 255, 0.5);
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(46, 155, 255, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(46, 155, 255, 0.8), 0 0 40px rgba(122, 62, 245, 0.4); }
+        }
+
+        /* Feature Tabs */
+        .feature-tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid rgba(46, 155, 255, 0.2);
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--subtext);
+            transition: all 0.3s;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+            background: rgba(46, 155, 255, 0.1);
+        }
+
+        .tab-button:hover::before {
+            width: 100%;
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .tab-button.active::before {
+            width: 100%;
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Tab Content Sections */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Upload Section */
+        .upload-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-zone {
+            border: 3px dashed var(--card-border);
+            border-radius: 15px;
+            padding: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(46, 155, 255, 0.03);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(46, 155, 255, 0.1);
+            box-shadow: 0 0 30px rgba(46, 155, 255, 0.3);
+            transform: scale(1.01);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--glow);
+            background: rgba(0, 175, 255, 0.2);
+            transform: scale(1.02);
+            box-shadow: 0 0 40px var(--glow);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 20px var(--glow));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .file-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(46, 155, 255, 0.1);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .file-info.visible {
+            display: block;
+        }
+
+        .analyze-btn {
+            margin-top: 1.5rem;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(46, 155, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analyze-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .analyze-btn:hover::before {
+            left: 100%;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(46, 155, 255, 0.6), 0 0 20px var(--glow);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(46, 155, 255, 0.2);
+            border-top: 4px solid var(--primary);
+            border-right: 4px solid var(--secondary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.visible {
+            display: block;
+        }
+
+        /* Score Cards */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .score-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(46, 155, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .score-card:hover::before {
+            opacity: 1;
+        }
+
+        .score-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(46, 155, 255, 0.4), 0 0 30px rgba(122, 62, 245, 0.3);
+            border-color: var(--primary);
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0.5rem 0;
+            filter: drop-shadow(0 0 10px rgba(46, 155, 255, 0.5));
+        }
+
+        /* AI Features Section */
+        .ai-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 60px rgba(46, 155, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(46, 155, 255, 0.5);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--card-border);
+            background: rgba(11, 18, 34, 0.5);
+            color: var(--text);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(46, 155, 255, 0.3);
+            background: rgba(11, 18, 34, 0.8);
+        }
+
+        .feature-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            box-shadow: 0 5px 20px rgba(46, 155, 255, 0.3);
+        }
+
+        .feature-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46, 155, 255, 0.5), 0 0 20px var(--glow);
+        }
+
+        .feature-result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(46, 155, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            display: none;
+            box-shadow: 0 0 30px rgba(46, 155, 255, 0.2);
+        }
+
+        .feature-result.visible {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(11, 18, 34, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            margin-left: 20%;
+            box-shadow: 0 0 20px rgba(46, 155, 255, 0.4);
+        }
+
+        .chat-message.ai {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            margin-right: 20%;
+            color: var(--text);
+        }
+
+        /* Match Score Display */
+        .match-score-display {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(46, 155, 255, 0.2), rgba(122, 62, 245, 0.2));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            color: var(--text);
+            margin-top: 1.5rem;
+            box-shadow: 0 0 40px rgba(46, 155, 255, 0.3);
+        }
+
+        .match-percentage {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px var(--glow));
+        }
+
+        .keywords-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .keywords-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            background: rgba(46, 155, 255, 0.2);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        /* Before/After Comparison */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .comparison-box {
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+
+        .comparison-label {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 175, 255, 0.3);
+        }
+
+        .copy-btn:hover {
+            background: #0090d9;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 175, 255, 0.5);
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .skill-badge {
+            padding: 0.75rem 1.25rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            border: 1px solid var(--card-border);
+        }
+
+        .skill-badge.in-demand {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 0 20px rgba(46, 155, 255, 0.4);
+            border: none;
+        }
+
+        .skill-badge.in-demand:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(46, 155, 255, 0.6);
+        }
+
+        .skill-badge:not(.in-demand) {
+            background: var(--card-bg);
+            color: var(--text);
+        }
+
+        .skill-badge:not(.in-demand):hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(46, 155, 255, 0.3);
+        }
+
+        /* Recommendations */
+        .recommendations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recommendation-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .recommendation-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 15px 60px rgba(46, 155, 255, 0.3);
+        }
+
+        .recommendation-card.high-priority {
+            border-left-color: var(--danger);
+        }
+
+        .recommendation-card.medium-priority {
+            border-left-color: var(--warning);
+        }
+
+        .recommendation-card.low-priority {
+            border-left-color: var(--success);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text);
+            margin-top: 4rem;
+            border-top: 1px solid var(--card-border);
+            background: rgba(11, 18, 34, 0.5);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison-grid,
+            .keywords-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-tabs {
+                font-size: 0.875rem;
+            }
+
+            .tab-button {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Resume Analyzer Pro</span>
+                </div>
+                <div class="header-badge">
+                    <i class="fas fa-sparkles"></i> GPT-4 Powered
+                </div>
+            </div>
+            
+            <!-- Feature Tabs -->
+            <div class="feature-tabs">
+                <button class="tab-button active" data-tab="upload">
+                    <i class="fas fa-upload"></i> Upload & Analyze
+                </button>
+                <button class="tab-button" data-tab="job-match">
+                    <i class="fas fa-bullseye"></i> Job Match
+                </button>
+                <button class="tab-button" data-tab="chat">
+                    <i class="fas fa-comments"></i> AI Chat Expert
+                </button>
+                <button class="tab-button" data-tab="rewriter">
+                    <i class="fas fa-magic"></i> AI Rewriter
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tab 1: Upload & Analyze -->
+        <div id="upload-tab" class="tab-content active">
+            <div class="upload-card">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h2 style="color: var(--text);">Drop your resume here or click to browse</h2>
+                    <p style="color: var(--subtext); margin-top: 1rem;">
+                        Supports PDF, DOCX, DOC, TXT • Maximum 5MB
+                    </p>
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" style="display: none;">
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <i class="fas fa-file-pdf" style="color: var(--primary); font-size: 2rem;"></i>
+                    <div id="fileName" style="margin-top: 0.5rem; font-weight: 600; color: var(--text);"></div>
+                    <div id="fileSize" style="color: var(--subtext); font-size: 0.875rem;"></div>
+                </div>
+
+                <button class="analyze-btn" id="analyzeBtn" disabled>
+                    <i class="fas fa-magic"></i> Analyze with AI
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <h3 style="color: var(--text);">Analyzing your resume with AI...</h3>
+                <p style="color: var(--subtext);">This may take a few seconds</p>
+            </div>
+
+            <div class="results-section" id="results">
+                <!-- Score Cards -->
+                <div class="score-grid" id="scoreCards"></div>
+
+                <!-- AI Features Grid -->
+                <div class="ai-features-grid">
+                    <!-- Strengths -->
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="feature-title">Your Strengths</h3>
+                        </div>
+                        <div id="strengthsSummary" style="color: #374151; line-height: 1.8;"></div>
+                    </div>
+
+                    <!-- Areas for Improvement -->
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="feature-title">Areas for Improvement</h3>
+                        </div>
+                        <div id="weaknessesSummary" style="color: #374151; line-height: 1.8;"></div>
+                    </div>
+
+                    <!-- Detected Skills -->
+                    <div class="feature-card" style="grid-column: 1 / -1;">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="feature-title">Detected Skills</h3>
+                        </div>
+                        <div class="skills-grid" id="skillsGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div style="margin-top: 3rem;">
+                    <h2 style="color: white; margin-bottom: 1.5rem;">
+                        <i class="fas fa-lightbulb"></i> Personalized Recommendations
+                    </h2>
+                    <div class="recommendations-list" id="recommendationsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Job Match -->
+        <div id="job-match-tab" class="tab-content">
+            <div class="feature-card" style="max-width: 900px; margin: 0 auto;">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div>
+                        <h3 class="feature-title">Job Description Matcher</h3>
+                        <p style="color: #6b7280; font-size: 0.95rem;">
+                            Paste a job description to see how well your resume matches
+                        </p>
+                    </div>
+                </div>
+                
+                <textarea 
+                    id="jobDescription" 
+                    rows="10" 
+                    placeholder="Paste the full job description here...
+
+Example:
+We're looking for a DevOps Engineer with experience in:
+- Azure, AWS, or GCP
+- Docker and Kubernetes
+- CI/CD pipelines (Jenkins, GitHub Actions)
+- Infrastructure as Code (Terraform, Ansible)
+- Python or PowerShell scripting"></textarea>
+                
+                <button class="feature-btn" id="matchJobBtn" onclick="matchJob()">
+                    <i class="fas fa-search"></i> Calculate Match Score
+                </button>
+
+                <div class="feature-result" id="matchResult"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: AI Chat Expert -->
+        <div id="chat-tab" class="tab-content">
+            <div class="feature-card" style="max-width: 900px; margin: 0 auto;">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h3 class="feature-title">AI Resume Expert</h3>
+                        <p style="color: #6b7280; font-size: 0.95rem;">
+                            Ask questions about resume improvement, career advice, and more
+                        </p>
+                    </div>
+                </div>
+
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-message ai">
+                        <strong>AI Expert:</strong><br>
+                        Hello! I'm your AI resume expert powered by GPT-4. I've analyzed your resume and I'm ready to answer any questions you have about improving it, optimizing for ATS, or career development. What would you like to know?
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <textarea 
+                        id="chatQuestion" 
+                        rows="2" 
+                        placeholder="Ask a question... (e.g., 'How can I make my resume more ATS-friendly?' or 'What skills should I add for a DevOps role?')"
+                        style="flex: 1;"
+                        onkeypress="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); askQuestion(); }"></textarea>
+                    <button class="feature-btn" style="width: auto; margin-top: 0;" onclick="askQuestion()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: AI Rewriter -->
+        <div id="rewriter-tab" class="tab-content">
+            <div class="feature-card" style="max-width: 1200px; margin: 0 auto;">
+                <div class="feature-header">
+                    <div class="feature-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div>
+                        <h3 class="feature-title">AI Resume Rewriter</h3>
+                        <p style="color: #6b7280; font-size: 0.95rem;">
+                            Transform boring text into powerful, achievement-focused content
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">
+                        Section Type:
+                    </label>
+                    <select id="sectionType" style="padding: 0.75rem; border-radius: 10px; border: 2px solid #e5e7eb; font-size: 1rem; width: 100%;">
+                        <option value="experience">Work Experience</option>
+                        <option value="summary">Professional Summary</option>
+                        <option value="skills">Skills Section</option>
+                        <option value="education">Education</option>
+                    </select>
+                </div>
+
+                <textarea 
+                    id="originalText" 
+                    rows="5" 
+                    placeholder="Paste the text you want to improve...
+
+Example:
+Worked on various projects using Azure and helped the team with deployments."></textarea>
+                
+                <button class="feature-btn" onclick="rewriteText()">
+                    <i class="fas fa-wand-magic-sparkles"></i> Rewrite with AI
+                </button>
+
+                <div class="feature-result" id="rewriteResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Powered by Azure AI Document Intelligence & GPT-4 | Built by Montell Boks</p>
+        <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+            <a href="https://calm-dune-0801d2110.1.azurestaticapps.net/" target="_blank">
+                View More Projects →
+            </a>
+        </p>
+    </footer>
+
+    <script>
+        const API_URL = 'http://localhost:5050/api/resume';
+        let currentResumeId = null;
+        let selectedFile = null;
+
+        // Tab Switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Update buttons
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            });
+        });
+
+        // File Upload Handling
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFile(file);
+        });
+
+        function handleFile(file) {
+            if (!file) return;
+
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                alert('File too large! Maximum size is 5MB.');
+                return;
+            }
+
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = `${(file.size / 1024).toFixed(2)} KB`;
+            fileInfo.classList.add('visible');
+            analyzeBtn.disabled = false;
+        }
+
+        // Analyze Resume
+        analyzeBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            document.getElementById('loading').classList.add('visible');
+            document.getElementById('results').classList.remove('visible');
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch(`${API_URL}/analyze`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Analysis failed');
+
+                const result = await response.json();
+                currentResumeId = result.resumeId;
+                displayResults(result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to analyze resume. Please try again.');
+            } finally {
+                document.getElementById('loading').classList.remove('visible');
+            }
+        });
+
+        function displayResults(data) {
+            // Score Cards
+            const scoreCards = document.getElementById('scoreCards');
+            scoreCards.innerHTML = `
+                <div class="score-card">
+                    <div style="color: #6b7280; font-weight: 600;">OVERALL SCORE</div>
+                    <div class="score-value">${Math.round(data.overallScore)}</div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Combined rating</div>
+                </div>
+                <div class="score-card">
+                    <div style="color: #6b7280; font-weight: 600;">ATS COMPATIBLE</div>
+                    <div class="score-value">${Math.round(data.atsScore)}</div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Tracking systems</div>
+                </div>
+                <div class="score-card">
+                    <div style="color: #6b7280; font-weight: 600;">COMPLETENESS</div>
+                    <div class="score-value">${Math.round(data.completenessScore)}</div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Required sections</div>
+                </div>
+                <div class="score-card">
+                    <div style="color: #6b7280; font-weight: 600;">KEYWORDS</div>
+                    <div class="score-value">${Math.round(data.keywordScore)}</div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Industry terms</div>
+                </div>
+                <div class="score-card">
+                    <div style="color: #6b7280; font-weight: 600;">FORMATTING</div>
+                    <div class="score-value">${Math.round(data.formattingScore)}</div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Structure quality</div>
+                </div>
+            `;
+
+            // Summaries
+            document.getElementById('strengthsSummary').textContent = data.strengthsSummary;
+            document.getElementById('weaknessesSummary').textContent = data.weaknessesSummary;
+
+            // Skills
+            const skillsGrid = document.getElementById('skillsGrid');
+            skillsGrid.innerHTML = data.detectedSkills.map(skill => `
+                <div class="skill-badge ${skill.isInDemand ? 'in-demand' : ''}">
+                    ${skill.name} ${skill.isInDemand ? '🔥' : ''}
+                </div>
+            `).join('');
+
+            // Recommendations
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = data.recommendations.map(rec => `
+                <div class="recommendation-card ${rec.priority.toLowerCase()}-priority">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <h3 style="color: var(--dark); margin: 0;">${rec.title}</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <span style="background: ${rec.priority === 'High' ? 'var(--danger)' : rec.priority === 'Medium' ? 'var(--warning)' : 'var(--success)'}; color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">
+                                ${rec.priority.toUpperCase()} PRIORITY
+                            </span>
+                            <span style="background: #f3f4f6; color: var(--dark); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 600;">
+                                +${rec.impactScore} points
+                            </span>
+                        </div>
+                    </div>
+                    <p style="color: #6b7280; margin-bottom: 1rem;">${rec.description}</p>
+                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; border-left: 3px solid var(--primary);">
+                        <strong style="color: var(--primary); display: block; margin-bottom: 0.5rem;">
+                            <i class="fas fa-list-check"></i> Action Steps:
+                        </strong>
+                        <div style="white-space: pre-wrap; color: #374151; line-height: 1.8;">${rec.actionSteps}</div>
+                    </div>
+                    ${rec.example ? `
+                        <div style="margin-top: 1rem; padding: 1rem; background: #f0fdf4; border-radius: 8px; border-left: 3px solid var(--success);">
+                            <strong style="color: var(--success); display: block; margin-bottom: 0.5rem;">
+                                <i class="fas fa-lightbulb"></i> Example:
+                            </strong>
+                            <div style="color: #374151; line-height: 1.8; white-space: pre-wrap;">${rec.example}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            document.getElementById('results').classList.add('visible');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Job Matching
+        async function matchJob() {
+            if (!currentResumeId) {
+                alert('Please analyze a resume first!');
+                document.querySelector('[data-tab="upload"]').click();
+                return;
+            }
+
+            const jobDescription = document.getElementById('jobDescription').value.trim();
+            if (!jobDescription) {
+                alert('Please paste a job description!');
+                return;
+            }
+
+            const btn = document.getElementById('matchJobBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+
+            try {
+                const response = await fetch(`${API_URL}/${currentResumeId}/match-job`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jobDescription })
+                });
+
+                if (!response.ok) throw new Error('Match failed');
+
+                const data = await response.json();
+                displayMatchResult(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to match job. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Calculate Match Score';
+            }
+        }
+
+        function displayMatchResult(data) {
+            const resultDiv = document.getElementById('matchResult');
+            const matchColor = data.matchScore >= 80 ? 'var(--success)' : 
+                              data.matchScore >= 60 ? 'var(--warning)' : 'var(--danger)';
+            
+            resultDiv.innerHTML = `
+                <div class="match-score-display" style="background: ${matchColor};">
+                    <h3 style="margin: 0;">Job Match Score</h3>
+                    <div class="match-percentage">${Math.round(data.matchScore)}%</div>
+                    <p style="font-size: 1.1rem; margin: 0;">${data.recommendation}</p>
+                </div>
+                
+                <div class="keywords-grid">
+                    <div class="keywords-section" style="background: rgba(16, 185, 129, 0.1); color: var(--dark);">
+                        <h4 style="color: var(--success); margin-bottom: 0.75rem;">
+                            <i class="fas fa-check-circle"></i> Matching Keywords (${data.matchingKeywords.length})
+                        </h4>
+                        ${data.matchingKeywords.map(kw => `
+                            <span class="keyword-tag" style="background: var(--success); color: white;">${kw}</span>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="keywords-section" style="background: rgba(239, 68, 68, 0.1); color: var(--dark);">
+                        <h4 style="color: var(--danger); margin-bottom: 0.75rem;">
+                            <i class="fas fa-exclamation-circle"></i> Missing Keywords (${data.missingKeywords.length})
+                        </h4>
+                        ${data.missingKeywords.map(kw => `
+                            <span class="keyword-tag" style="background: var(--danger); color: white;">${kw}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            resultDiv.classList.add('visible');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // AI Chat
+        async function askQuestion() {
+            if (!currentResumeId) {
+                alert('Please analyze a resume first!');
+                document.querySelector('[data-tab="upload"]').click();
+                return;
+            }
+
+            const questionInput = document.getElementById('chatQuestion');
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Add user message
+            chatContainer.innerHTML += `
+                <div class="chat-message user">
+                    <strong>You:</strong><br>${question}
+                </div>
+            `;
+            
+            questionInput.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Add loading message
+            chatContainer.innerHTML += `
+                <div class="chat-message ai" id="loadingMsg">
+                    <i class="fas fa-spinner fa-spin"></i> Thinking...
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_URL}/${currentResumeId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+
+                if (!response.ok) throw new Error('Chat failed');
+
+                const data = await response.json();
+                
+                // Remove loading message
+                document.getElementById('loadingMsg').remove();
+                
+                // Add AI response
+                chatContainer.innerHTML += `
+                    <div class="chat-message ai">
+                        <strong>AI Expert:</strong><br>${data.answer}
+                    </div>
+                `;
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMsg').remove();
+                chatContainer.innerHTML += `
+                    <div class="chat-message ai">
+                        <strong>AI Expert:</strong><br>
+                        Sorry, I encountered an error. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        // AI Rewriter
+        async function rewriteText() {
+            const originalText = document.getElementById('originalText').value.trim();
+            const sectionType = document.getElementById('sectionType').value;
+            
+            if (!originalText) {
+                alert('Please enter some text to rewrite!');
+                return;
+            }
+
+            const resultDiv = document.getElementById('rewriteResult');
+            resultDiv.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                    <p style="margin-top: 1rem; color: #6b7280;">AI is rewriting your text...</p>
+                </div>
+            `;
+            resultDiv.classList.add('visible');
+
+            try {
+                const response = await fetch(`${API_URL}/rewrite`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ originalText, sectionType })
+                });
+
+                if (!response.ok) throw new Error('Rewrite failed');
+
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <h4 style="color: var(--primary); margin-bottom: 1rem;">
+                        <i class="fas fa-magic"></i> AI-Enhanced Version
+                    </h4>
+                    <div class="comparison-grid">
+                        <div class="comparison-box">
+                            <div class="comparison-label">
+                                <i class="fas fa-file-alt"></i> Before
+                            </div>
+                            <div style="color: #6b7280; line-height: 1.8;">${data.original}</div>
+                        </div>
+                        <div class="comparison-box" style="border-color: var(--success);">
+                            <div class="comparison-label" style="color: var(--success);">
+                                <i class="fas fa-sparkles"></i> After (AI-Enhanced)
+                            </div>
+                            <div style="color: #374151; line-height: 1.8; font-weight: 500;">${data.rewritten}</div>
+                            <button class="copy-btn" style="margin-top: 1rem; width: 100%;" onclick="copyToClipboard('${data.rewritten.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-copy"></i> Copy Enhanced Version
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--danger);">
+                        <i class="fas fa-exclamation-circle" style="font-size: 2rem;"></i>
+                        <p style="margin-top: 1rem;">Failed to rewrite text. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
