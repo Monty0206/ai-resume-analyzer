@@ -29,34 +29,43 @@ builder.Services.AddSwaggerGen(options =>
     // options.IncludeXmlComments(xmlPath);
 });
 
-// Database setup - using LocalDB for dev, will migrate to Azure SQL later
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+// Database setup - using LocalDB for dev
+// In production (Azure), skip DB since we're not storing data yet
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connectionString) && connectionString.Contains("localdb"))
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    
-    // Added retry logic because connection drops were annoying during testing
-    options.UseSqlServer(connectionString, sqlOptions =>
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
+        // Added retry logic because connection drops were annoying during testing
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
+        
+        // Only log sensitive stuff in dev - learned this the hard way
+        if (builder.Environment.IsDevelopment())
+        {
+            options.EnableSensitiveDataLogging();
+            options.EnableDetailedErrors();
+        }
     });
-    
-    // Only log sensitive stuff in dev - learned this the hard way
-    if (builder.Environment.IsDevelopment())
-    {
-        options.EnableSensitiveDataLogging();
-        options.EnableDetailedErrors();
-    }
-});
+}
+else
+{
+    // For production, use in-memory DB since we're not persisting data anyway
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("ResumeAnalyzerDb"));
+}
 
 // Register my custom services
 builder.Services.AddScoped<DocumentIntelligenceService>();
 builder.Services.AddScoped<ResumeAnalysisService>();
 builder.Services.AddScoped<AzureOpenAIService>(); // GPT-4 integration!
 
-// CORS setup - had to add this because my HTML file couldn't connect at first
+// CORS setup - allowing Azure Static Web Apps domain
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -64,7 +73,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:3000",
                 "http://localhost:4200",
-                "http://localhost:5173")
+                "http://localhost:5173",
+                "https://lemon-bay-0001dab03.3.azurestaticapps.net") // Azure production URL
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -126,8 +136,8 @@ app.MapGet("/", () => Results.Ok(new
     }
 }));
 
-// Auto-apply migrations on startup - saves me from running commands manually
-if (app.Environment.IsDevelopment())
+// Auto-apply migrations on startup only if using real SQL Server
+if (app.Environment.IsDevelopment() && connectionString != null && connectionString.Contains("localdb"))
 {
     using (var scope = app.Services.CreateScope())
     {
