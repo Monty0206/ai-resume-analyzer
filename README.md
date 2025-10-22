@@ -249,4 +249,4 @@ For questions or support, please open an issue in the GitHub repository or conta
 
 ---
 
-**Built with ❤️ for job seekers worldwide**
+**Built for job seekers worldwide**
