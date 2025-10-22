@@ -227,7 +227,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👨‍💻 Author
 
-**Montso Mathibe**
+**Montell Boks**
 - Portfolio: [https://calm-dune-0801d2110.1.azurestaticapps.net/](https://calm-dune-0801d2110.1.azurestaticapps.net/)
 - GitHub: [@Monty0206](https://github.com/Monty0206)
 - LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
